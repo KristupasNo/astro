@@ -1,4 +1,5 @@
 #include "frame.h"
+#include "version.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -66,7 +67,7 @@ int main(int argc, char **argv)
     frame_status_t status;
 
     if (argc == 2 && strcmp(argv[1], "--version") == 0) {
-        return puts("tlmframe " TLMFRAME_VERSION) == EOF ? 1 : 0;
+        return puts("tlmframe " TLMFRAME_VERSION " (" TLMFRAME_COMMIT_HASH ")") == EOF ? 1 : 0;
     }
     if (argc != 3 || (strcmp(argv[1], "encode") != 0 &&
                       strcmp(argv[1], "decode") != 0)) {

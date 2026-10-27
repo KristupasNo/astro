@@ -1,10 +1,10 @@
-if(NOT DEFINED TLMFRAME)
-    message(FATAL_ERROR "TLMFRAME executable path is required")
+if(NOT DEFINED TLMFRAME OR NOT DEFINED TLMFRAME_VERSION OR NOT DEFINED TLMFRAME_COMMIT_HASH)
+    message(FATAL_ERROR "TLMFRAME executable path, version and commit hash are required")
 endif()
 
 function(expect_success command input expected)
     execute_process(
-        COMMAND "${TLMFRAME}" "${command}" "${input}"
+        COMMAND ${TLMFRAME_EMULATOR} "${TLMFRAME}" "${command}" "${input}"
         RESULT_VARIABLE status
         OUTPUT_VARIABLE output
         ERROR_VARIABLE error
@@ -16,7 +16,7 @@ endfunction()
 
 function(expect_failure)
     execute_process(
-        COMMAND "${TLMFRAME}" ${ARGV}
+        COMMAND ${TLMFRAME_EMULATOR} "${TLMFRAME}" ${ARGV}
         RESULT_VARIABLE status
         OUTPUT_VARIABLE output
         ERROR_VARIABLE error
@@ -32,12 +32,12 @@ expect_success(encode "" "1ACFFC1D00001D0F")
 expect_success(decode "1ACFFC1D00001D0F" "")
 
 execute_process(
-    COMMAND "${TLMFRAME}" --version
+    COMMAND ${TLMFRAME_EMULATOR} "${TLMFRAME}" --version
     RESULT_VARIABLE status
     OUTPUT_VARIABLE output
     ERROR_VARIABLE error
 )
-if(NOT status EQUAL 0 OR NOT output STREQUAL "tlmframe 0.1.0\n" OR NOT error STREQUAL "")
+if(NOT status EQUAL 0 OR NOT output STREQUAL "tlmframe ${TLMFRAME_VERSION} (${TLMFRAME_COMMIT_HASH})\n" OR NOT error STREQUAL "")
     message(FATAL_ERROR "Unexpected --version result: ${output}${error}")
 endif()
 

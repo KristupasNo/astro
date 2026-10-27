@@ -16,15 +16,9 @@ RUN apt-get update \
 WORKDIR /work
 
 FROM build-env AS test
-COPY CMakeLists.txt ./
-COPY include/ include/
-COPY src/ src/
-COPY tests/ tests/
+# Git metadata is needed to generate the version header.
+COPY . .
+RUN sh ci.sh
 
-RUN cmake -S . -B build/Debug -DCMAKE_BUILD_TYPE=Debug \
-    && cmake --build build/Debug --parallel \
-    && ctest --test-dir build/Debug --output-on-failure
-
-RUN cmake -S . -B build/Release -DCMAKE_BUILD_TYPE=Release \
-    && cmake --build build/Release --parallel \
-    && ctest --test-dir build/Release --output-on-failure
+FROM scratch AS artifacts
+COPY --from=test /artifacts/ /
